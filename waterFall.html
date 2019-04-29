@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>瀑布流布局</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        div.warpper {
+            position: relative;
+
+
+            width: 1200px;
+            margin: 0 auto;
+
+        }
+
+        div.item {
+
+
+            border: 5px solid #666;
+            box-sizing: border-box;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-sizing: border-box;
+            margin: 5px;
+
+        }
+    </style>
+</head>
+
+<body>
+    <div class="warpper">
+        <!-- <div class="item">
+              <img src="https://n.sinaimg.cn/translate/20170920/5SUi-fykymwm9895551.jpg" alt="">
+          </div> -->
+        <!-- <div class="item">
+                <img src="https://n.sinaimg.cn/translate/20170920/5SUi-fykymwm9895551.jpg" alt="">
+            </div>
+            <div class="item">
+                    <img src="https://n.sinaimg.cn/translate/20170920/5SUi-fykymwm9895551.jpg" alt="">
+                </div> -->
+    </div>
+    <script>
+        var oDiv = document.getElementsByClassName('warpper')[0];
+        var waterFall = {
+            init: function (dom, column) {
+
+                this.dom = dom;
+                this.column = column;
+                this.areaWidth = dom.clientWidth;
+                this.itemDiv = "";
+                this.colWidth = Math.floor(this.areaWidth / this.column) - 40;
+                this.setSize();
+                this.bindEvent();
+
+            },
+            imgArr: ['http://www.dabaoku.com/sucai/dongwulei/hyang/0147.jpg', 'http://ff.topitme.com/f/94/2d/11239422793fa2d94fo.jpg',
+                'http://p0.so.qhmsg.com/t01c8e252970741d135.jpg', 'http://pic.ffpic.com/files/2018/0320/0306kamcmtpsjbz8.jpg', 'http://pic9.nipic.com/20100818/668573_164728037193_2.jpg',
+                'http://img5q.duitang.com/uploads/blog/201404/23/20140423153035_kzcnU.thumb.700_0.jpeg', 'http://p2.so.qhmsg.com/t01f9a16e8806e3ec57.jpg', 'http://www.005.tv/uploads/allimg/170313/10360C323-6.jpg',
+                'http://pic8.nipic.com/20100623/3556745_192135098804_2.jpg', 'http://photocdn.sohu.com/20131025/Img388904988.jpg', 'http://pic64.nipic.com/file/20150419/9885883_162442926000_2.jpg', 'http://file06.16sucai.com/2016/0411/4e4b4fe8be0ddcd1dcce1c3646382b47.jpg'],
+            setSize: function () {
+
+                   
+                for (var i = 0; i < this.imgArr.length; i++) {
+
+                    if (i < this.column) {
+
+                        this.itemDiv += "<div class='item' style='float:left;'><img src=" + this.imgArr[i] + " style='width:" + this.colWidth + "px' class='item-img'></div>"
+
+
+                    } else {
+                        this.itemDiv += "<div class='item'><img src=" + this.imgArr[i] + " style='width:" + this.colWidth + "px' class='item-img'></div>"
+
+                    }
+
+                }
+                
+                this.dom.innerHTML = this.itemDiv;
+                this.allDiv = document.getElementsByClassName('item');
+                
+              
+
+                this.setHeight(this.column, this.colWidth);
+            },
+            setHeight: function (column, width) {
+
+                
+               
+
+                let heightArr = [];
+
+                for (var i = 0; i < this.allDiv.length; i++) {
+
+                    var everyHeight = this.allDiv[i].offsetHeight + 10;
+           
+                    if (i < column) {
+                        heightArr.push(everyHeight);
+                        console.log(heightArr);
+                    } else {
+
+                        let minHeight = Math.min.apply(null, heightArr);
+                        let minIndex = heightArr.indexOf(minHeight);
+
+                        this.allDiv[i].style.position = 'absolute';
+                        this.allDiv[i].style.left = minIndex * (width + 40) + 'px';
+                        this.allDiv[i].style.top = minHeight + 'px';
+                        heightArr[minIndex] += everyHeight;
+
+                    }
+
+                }
+            },
+            bindEvent: function () {
+                let len = this.allDiv.length;
+                console.log(len);
+                let docHeight = document.body.clientHeight || document.documentElement.clientHeight;
+                window.addEventListener('scroll', () => {
+                    let scrollTop = window.pageYOffset;
+                    let end = this.allDiv[len - 1];
+
+                    let endTop = end.offsetTop;
+                    console.log(endTop, scrollTop + docHeight);
+                    if (scrollTop + docHeight >= endTop) {
+                        this.setSize();
+                    }
+
+                });
+                window.addEventListener('load',() => {
+                    this.setSize();
+                })
+            },
+            NodetoString: function (nodelist) {
+
+                let div = document.createElement("div");
+                div.appendChild(nodelist);
+                let str = div.innerHTML;
+                div = null;
+                return str;
+
+            }
+        };
+
+        waterFall.init(oDiv, 3);
+    </script>
+</body>
+
+</html>
+
+
+
+
+
+<!-- if(i < this.column){
+   
+ }else{
+    this.itemDiv += "<div class='item'><img src="+ this.imgArr[i] +" style='width:"+ this.colWidth +"px' class='item-img'></div>" ;
+ } -->
